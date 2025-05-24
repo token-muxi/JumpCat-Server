@@ -12,6 +12,11 @@ type Config struct {
 	Debug    bool
 	Port     string
 	Database string
+	Redis    struct {
+		Addr     string
+		Password string
+		DB       int
+	}
 }
 
 // DefaultConfig 默认配置
@@ -20,6 +25,15 @@ func DefaultConfig() *Config {
 		Debug:    false,
 		Port:     "8080",
 		Database: "",
+		Redis: struct {
+			Addr     string
+			Password string
+			DB       int
+		}{
+			Addr:     "",
+			Password: "",
+			DB:       0,
+		},
 	}
 }
 

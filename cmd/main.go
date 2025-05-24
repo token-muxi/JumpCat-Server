@@ -28,6 +28,13 @@ func main() {
 	}
 	defer database.GetDB().Close()
 
+	// 初始化 Redis 连接
+	err = database.NewRedis(cfg)
+	if err != nil {
+		middleware.Logger.Log("ERROR", fmt.Sprintf("Failed to initialize Redis: %s", err))
+		return
+	}
+
 	// 启动服务
 	middleware.Logger.Log("INFO", fmt.Sprintf("Starting server on port %s", cfg.Port))
 	err = http.ListenAndServe(":"+cfg.Port, loggedRouter)
