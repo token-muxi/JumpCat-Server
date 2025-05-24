@@ -43,7 +43,8 @@ func (cs *CreateRoomService) CreateRoom(Player1 string) (int, error) {
 		Room:    RoomID,
 		P1:      Player1,
 		Map:     locData,
-		IsStart: false,
+		P1_ready: false,
+		P2_ready: false,
 	}
 
 	err = cs.RoomRepository.InsertRoom(&RoomMessage)

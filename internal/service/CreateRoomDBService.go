@@ -19,7 +19,7 @@ func NewRoomRepository(db *sql.DB) *RoomRepository {
 
 // InsertRoom 创建房间
 func (r *RoomRepository) InsertRoom(RoomMessage *Room) error {
-	query := "INSERT INTO room (room, p1, p2, is_start, map) VALUES (?, ?, ?, ?, ?)"
+	query := "INSERT INTO room (room, p1, p2, p1_ready,p2_ready, map) VALUES (?, ?, ?, ?, ?)"
 
 	jsonMap, err := json.Marshal(RoomMessage.Map)
 	if err != nil {
@@ -27,7 +27,7 @@ func (r *RoomRepository) InsertRoom(RoomMessage *Room) error {
 		return err
 	}
 
-	_, err = r.db.Exec(query, RoomMessage.Room, RoomMessage.P1, RoomMessage.P2, RoomMessage.IsStart, string(jsonMap))
+	_, err = r.db.Exec(query, RoomMessage.Room, RoomMessage.P1, RoomMessage.P2, RoomMessage.P1_ready, RoomMessage.P2_ready, string(jsonMap))
 	if err != nil {
 		middleware.Logger.Log("ERROR", fmt.Sprintf("failed to create room: %s", err.Error()))
 		return err
@@ -56,13 +56,4 @@ func (r *RoomRepository) InsertPlayer2(P2 string, RoomID int) error {
 	return nil
 }
 
-// UpdateStatus 更新状态
-func (r *RoomRepository) UpdateStatus(RoomID int, Status bool) error {
-	query := "UPDATE room SET is_start = ? WHERE room = ?"
-	_, err := r.db.Exec(query, Status, RoomID)
-	if err != nil {
-		middleware.Logger.Log("ERROR", fmt.Sprintf("failed to update status of room %d:%s", RoomID, err.Error()))
-		return err
-	}
-	return nil
-}
+
