@@ -3,6 +3,7 @@ package service
 import (
 	"JumpCat-Server/middleware"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 )
 
@@ -19,9 +20,16 @@ func NewRoomRepository(db *sql.DB) *RoomRepository {
 // InsertRoom 创建房间
 func (r *RoomRepository) InsertRoom(RoomMessage *Room) error {
 	query := "INSERT INTO room (room, p1, p2, is_start, map) VALUES (?, ?, ?, ?, ?)"
-	_, err := r.db.Exec(query, RoomMessage.Room, RoomMessage.P1, RoomMessage.P2, RoomMessage.Map, RoomMessage.IsStart)
+
+	jsonMap, err := json.Marshal(RoomMessage.Map)
 	if err != nil {
-		middleware.Logger.Log("ERROR", fmt.Sprintf("failed to create room message:%s", err.Error()))
+		middleware.Logger.Log("ERROR", fmt.Sprintf("failed to marshal map: %s", err.Error()))
+		return err
+	}
+
+	_, err = r.db.Exec(query, RoomMessage.Room, RoomMessage.P1, RoomMessage.P2, RoomMessage.IsStart, string(jsonMap))
+	if err != nil {
+		middleware.Logger.Log("ERROR", fmt.Sprintf("failed to create room: %s", err.Error()))
 		return err
 	}
 	return nil

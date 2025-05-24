@@ -53,7 +53,7 @@ func (cs *CreateRoomService) CreateRoom(Player1 string) (int, error) {
 
 	err = cs.RoomRepository.InsertRoom(&RoomMessage)
 	if err != nil {
-		middleware.Logger.Log("ERROR", fmt.Sprintf("failed to insert room %d:map message: %s", RoomID, err))
+		middleware.Logger.Log("ERROR", fmt.Sprintf("failed to insert map message for room %d: %s", RoomID, err))
 		return 0, err
 	}
 	return RoomID, nil
