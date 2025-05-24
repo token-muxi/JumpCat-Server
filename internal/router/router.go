@@ -10,7 +10,7 @@ func NewRouter() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handler.Home)
 	mux.HandleFunc("/create-room", methodHandler(handler.CreateRoom, http.MethodPost))
-	mux.HandleFunc("/get-room", methodHandler(handler.GetRoom, http.MethodPost))
+	mux.HandleFunc("/get-room", methodHandler(handler.GetRoom, http.MethodGet))
 
 	return mux
 }
