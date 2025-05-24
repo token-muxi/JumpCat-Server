@@ -17,8 +17,8 @@ type Map struct {
 }
 
 type Location struct {
-	start int64 `json:"start"`
-	end   int64 `json:"end"`
+	Start int64 `json:"start"`
+	End   int64 `json:"end"`
 }
 
 func NewCreateRoomService(r *RoomRepository) *CreateRoomService {
@@ -61,9 +61,9 @@ func InitMap() Map {
 	for i := 0; i < len(Locas); i++ {
 		//地刺长度
 		spike_length := rand.Intn(4) + 1
-		Locas[i].start = int64(rand.Intn(10) + current + cat_length)
-		current = int(Locas[i].end)
-		Locas[i].end = Locas[i].start + int64(spike_length)
+		Locas[i].Start = int64(rand.Intn(10) + current + cat_length)
+		current = int(Locas[i].End)
+		Locas[i].End = Locas[i].Start + int64(spike_length)
 	}
 	return Map{
 		Length: int64(length),
