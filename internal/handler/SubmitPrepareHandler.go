@@ -14,7 +14,7 @@ func SubmitPrepare(w http.ResponseWriter, r *http.Request) {
 	role := r.URL.Query().Get("role")
 	room, _ := strconv.Atoi(r.URL.Query().Get("room"))
 	if role == "" || room == 0 {
-		util.WriteResponse(w, http.StatusBadRequest, "role and room is require")
+		util.WriteResponse(w, http.StatusBadRequest, "role and room is required")
 	}
 
 	db := database.GetDB()
@@ -24,10 +24,10 @@ func SubmitPrepare(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//创建实例
+	// 创建实例
 	SubmitPrepareService := service.NewSubmitPrepareService(db)
 
-	//更新状态
+	// 更新状态
 	err := SubmitPrepareService.UpdateStatus(room, role, true)
 	if err != nil {
 		middleware.Logger.Log("ERROR", fmt.Sprintf("Failed to submit player %s status: %s", role, err))

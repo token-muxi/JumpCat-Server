@@ -19,7 +19,7 @@ func NewRoomRepository(db *sql.DB) *RoomRepository {
 
 // InsertRoom 创建房间
 func (r *RoomRepository) InsertRoom(RoomMessage *Room) error {
-	query := "INSERT INTO room (room, p1, p2, p1_ready,p2_ready, map) VALUES (?, ?, ?, ?, ?)"
+	query := "INSERT INTO room (room, p1, p2, p1_ready, p2_ready, map) VALUES (?, ?, ?, ?, ?, ?)"
 
 	jsonMap, err := json.Marshal(RoomMessage.Map)
 	if err != nil {
@@ -55,5 +55,3 @@ func (r *RoomRepository) InsertPlayer2(P2 string, RoomID int) error {
 	}
 	return nil
 }
-
-

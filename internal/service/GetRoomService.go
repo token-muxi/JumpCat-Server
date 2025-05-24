@@ -15,13 +15,13 @@ func NewGetRoomService(db *sql.DB) *GetRoomService {
 }
 
 func (s *GetRoomService) GetRoom(room int) (Room, error) {
-	query := `SELECT p1, p2, p1_ready,p2_ready, map FROM room WHERE room = ?`
+	query := `SELECT p1, p2, p1_ready, p2_ready, map FROM room WHERE room = ?`
 	row := s.Database.QueryRow(query, room)
 
 	var p1, p2 string
-	var p1_ready, p2_ready bool
+	var p1Ready, p2Ready bool
 	var mapJSON string
-	err := row.Scan(&p1, &p2, &p1_ready, &p2_ready, &mapJSON)
+	err := row.Scan(&p1, &p2, &p1Ready, &p2Ready, &mapJSON)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Room{}, nil
@@ -37,12 +37,12 @@ func (s *GetRoomService) GetRoom(room int) (Room, error) {
 	}
 
 	roomData := Room{
-		Room:    room,
-		P1:      p1,
-		P2:      p2,
-		Map:     mapData,
-		P1_ready: p1_ready,
-		P2_ready: p2_ready,
+		Room:     room,
+		P1:       p1,
+		P2:       p2,
+		Map:      mapData,
+		P1_ready: p1Ready,
+		P2_ready: p2Ready,
 	}
 
 	return roomData, nil
