@@ -5,16 +5,21 @@ import (
 	"JumpCat-Server/internal/service"
 	"JumpCat-Server/internal/util"
 	"JumpCat-Server/middleware"
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 )
 
 func SubmitPrepare(w http.ResponseWriter, r *http.Request) {
-	role := r.URL.Query().Get("role")
-	room, _ := strconv.Atoi(r.URL.Query().Get("room"))
-	if role == "" || room == 0 {
-		util.WriteResponse(w, http.StatusBadRequest, "role and room is required")
+	var requestData struct {
+		Role string `json:"role"`
+		Room int    `json:"room"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&requestData)
+	if err != nil {
+		util.WriteResponse(w, http.StatusBadRequest, nil)
+		return
 	}
 
 	db := database.GetDB()
@@ -28,11 +33,11 @@ func SubmitPrepare(w http.ResponseWriter, r *http.Request) {
 	SubmitPrepareService := service.NewSubmitPrepareService(db)
 
 	// 更新状态
-	err := SubmitPrepareService.UpdateStatus(room, role, true)
+	err = SubmitPrepareService.UpdateStatus(requestData.Room, requestData.Role, true)
 	if err != nil {
-		middleware.Logger.Log("ERROR", fmt.Sprintf("Failed to submit player %s status: %s", role, err))
+		middleware.Logger.Log("ERROR", fmt.Sprintf("Failed to submit player %s status: %s", requestData.Role, err))
 		util.WriteResponse(w, http.StatusInternalServerError, nil)
 		return
 	}
-	util.WriteResponse(w, http.StatusOK, fmt.Sprintf("update player %s success", role))
+	util.WriteResponse(w, http.StatusOK, fmt.Sprintf("update player %s success", requestData.Role))
 }

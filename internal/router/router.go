@@ -11,7 +11,7 @@ func NewRouter() *http.ServeMux {
 	mux.HandleFunc("/", handler.Home)
 	mux.HandleFunc("/create-room", methodHandler(handler.CreateRoom, http.MethodPost))
 	mux.HandleFunc("/get-room", methodHandler(handler.GetRoom, http.MethodGet))
-	mux.HandleFunc("/update-status", methodHandler(handler.SubmitPrepare, http.MethodGet))
+	mux.HandleFunc("/update-status", methodHandler(handler.SubmitPrepare, http.MethodPost))
 
 	mux.HandleFunc("/game-connect", handler.GameConnectHandler)
 
