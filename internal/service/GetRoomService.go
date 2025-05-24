@@ -29,10 +29,10 @@ func (s *GetRoomService) GetRoom(room int) (Room, error) {
 		return Room{}, err
 	}
 
-	var mapData *Map
+	var locData []Location
 	if mapJSON != "" {
-		mapData = &Map{}
-		if err := json.Unmarshal([]byte(mapJSON), mapData); err != nil {
+		locData = []Location{}
+		if err := json.Unmarshal([]byte(mapJSON), &locData); err != nil {
 			return Room{}, err
 		}
 	}
@@ -42,7 +42,7 @@ func (s *GetRoomService) GetRoom(room int) (Room, error) {
 		P1:      p1,
 		P2:      p2,
 		IsStart: isStart,
-		Map:     mapData,
+		Map:     locData,
 	}
 
 	return roomData, nil

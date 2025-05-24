@@ -12,11 +12,6 @@ type CreateRoomService struct {
 	RoomRepository *RoomRepository
 }
 
-// Map 地图
-type Map struct {
-	Locas []Location `json:"map"`
-}
-
 type Location struct {
 	X     int64 `json:"x"`
 	Width int64 `json:"width"`
@@ -38,8 +33,8 @@ func (cs *CreateRoomService) CreateRoom(Player1 string) (int, error) {
 		return 0, err
 	}
 
-	var mapData *Map
-	if err := json.Unmarshal(MapMessage, &mapData); err != nil {
+	var locData []Location
+	if err := json.Unmarshal(MapMessage, &locData); err != nil {
 		middleware.Logger.Log("ERROR", fmt.Sprintf("failed to deserialize map message: %s", err))
 		return 0, err
 	}
@@ -47,7 +42,7 @@ func (cs *CreateRoomService) CreateRoom(Player1 string) (int, error) {
 	RoomMessage := Room{
 		Room:    RoomID,
 		P1:      Player1,
-		Map:     mapData,
+		Map:     locData,
 		IsStart: false,
 	}
 
@@ -61,7 +56,7 @@ func (cs *CreateRoomService) CreateRoom(Player1 string) (int, error) {
 
 // InitMap 生成地图
 // TODO: 添加生成限制逻辑
-func InitMap() Map {
+func InitMap() []Location {
 	length := 100000
 	current := 0
 	rand.Seed(time.Now().UnixNano())
@@ -73,7 +68,5 @@ func InitMap() Map {
 		current = int(Locas[i].X)
 		Locas[i].Width = int64(rand.Intn(200) + 100) // 生成范围100-300
 	}
-	return Map{
-		Locas: Locas,
-	}
+	return Locas
 }
