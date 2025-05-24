@@ -12,7 +12,7 @@ type CreateRoomService struct {
 }
 
 type Map struct {
-	length int64      `json:"length"`
+	Length int64      `json:"length"`
 	Locas  []Location `json:"locations"`
 }
 
@@ -66,7 +66,7 @@ func InitMap() Map {
 		Locas[i].end = Locas[i].start + int64(spike_length)
 	}
 	return Map{
-		length: int64(length),
+		Length: int64(length),
 		Locas:  Locas,
 	}
 }
