@@ -62,8 +62,8 @@ func InitMap() Map {
 		//地刺长度
 		spike_length := rand.Intn(4) + 1
 		Locas[i].Start = int64(rand.Intn(10) + current + cat_length)
-		current = int(Locas[i].End)
 		Locas[i].End = Locas[i].Start + int64(spike_length)
+		current = int(Locas[i].End)
 	}
 	return Map{
 		Length: int64(length),
