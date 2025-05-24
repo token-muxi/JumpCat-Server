@@ -2,19 +2,12 @@ package service
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 )
 
 type GetRoomService struct {
 	Database *sql.DB
-}
-
-type Room struct {
-	Room    int       `json:"room"`
-	P1      string    `json:"p1"`
-	P2      string    `json:"p2"`
-	IsStart bool      `json:"is_start"`
-	Map     *struct{} `json:"map"`
 }
 
 func NewGetRoomService(db *sql.DB) *GetRoomService {
@@ -27,8 +20,8 @@ func (s *GetRoomService) GetRoom(room int) (Room, error) {
 
 	var p1, p2 string
 	var isStart bool
-	var mapData *struct{}
-	err := row.Scan(&p1, &p2, &isStart, &mapData)
+	var mapJSON string
+	err := row.Scan(&p1, &p2, &isStart, &mapJSON)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Room{}, nil
@@ -36,10 +29,12 @@ func (s *GetRoomService) GetRoom(room int) (Room, error) {
 		return Room{}, err
 	}
 
-	if p2 == "" {
-		mapData = nil
-	} else {
-		mapData = &struct{}{}
+	var mapData *Map
+	if mapJSON != "" {
+		mapData = &Map{}
+		if err := json.Unmarshal([]byte(mapJSON), mapData); err != nil {
+			return Room{}, err
+		}
 	}
 
 	roomData := Room{
