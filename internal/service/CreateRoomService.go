@@ -2,7 +2,6 @@ package service
 
 import (
 	"JumpCat-Server/middleware"
-	"encoding/json"
 	"fmt"
 	"math/rand"
 	"time"
@@ -12,9 +11,14 @@ type CreateRoomService struct {
 	RoomRepository *RoomRepository
 }
 
+type Map struct {
+	length int64      `json:"length"`
+	Locas  []Location `json:"locations"`
+}
+
 type Location struct {
-	X     int64 `json:"x"`
-	Width int64 `json:"width"`
+	start int64 `json:"start"`
+	end   int64 `json:"end"`
 }
 
 func NewCreateRoomService(r *RoomRepository) *CreateRoomService {
@@ -27,27 +31,17 @@ func (cs *CreateRoomService) CreateRoom(Player1 string) (int, error) {
 	// 生成房间ID
 	rand.Seed(time.Now().UnixNano())
 	RoomID := rand.Intn(900000) + 100000
-	MapMessage, err := json.Marshal(InitMap())
-	if err != nil {
-		middleware.Logger.Log("ERROR", fmt.Sprintf("failed to serialize map message: %s", err))
-		return 0, err
-	}
-
-	var locData []Location
-	if err := json.Unmarshal(MapMessage, &locData); err != nil {
-		middleware.Logger.Log("ERROR", fmt.Sprintf("failed to deserialize map message: %s", err))
-		return 0, err
-	}
+	MapMessage := InitMap()
 
 	RoomMessage := Room{
-		Room:    RoomID,
-		P1:      Player1,
-		Map:     locData,
+		Room:     RoomID,
+		P1:       Player1,
+		Map:      MapMessage,
 		P1_ready: false,
 		P2_ready: false,
 	}
 
-	err = cs.RoomRepository.InsertRoom(&RoomMessage)
+	err := cs.RoomRepository.InsertRoom(&RoomMessage)
 	if err != nil {
 		middleware.Logger.Log("ERROR", fmt.Sprintf("failed to insert map message for room %d: %s", RoomID, err))
 		return 0, err
@@ -57,17 +51,22 @@ func (cs *CreateRoomService) CreateRoom(Player1 string) (int, error) {
 
 // InitMap 生成地图
 // TODO: 添加生成限制逻辑
-func InitMap() []Location {
-	length := 100000
+func InitMap() Map {
+	length := rand.Intn(600) + 200 //地图长度200-600
+	cat_length := 3
 	current := 0
-	rand.Seed(time.Now().UnixNano())
-	count := rand.Intn(20) + 1
+	count := rand.Intn(length/10) + 5 //地刺个数限制
 	Locas := make([]Location, count)
 	// 生成任意的地刺
 	for i := 0; i < len(Locas); i++ {
-		Locas[i].X = int64(rand.Intn(length-current+1) + current)
-		current = int(Locas[i].X)
-		Locas[i].Width = int64(rand.Intn(200) + 100) // 生成范围100-300
+		//地刺长度
+		spike_length := rand.Intn(4) + 1
+		Locas[i].start = int64(rand.Intn(10) + current + cat_length)
+		current = int(Locas[i].end)
+		Locas[i].end = Locas[i].start + int64(spike_length)
 	}
-	return Locas
+	return Map{
+		length: int64(length),
+		Locas:  Locas,
+	}
 }

@@ -6,6 +6,6 @@ type Room struct {
 	P2       string `json:"p2"`
 	P1_ready bool   `json:"p1_ready"`
 	P2_ready bool   `json:"p2_ready"`
-	Map      []Location   `json:"map"`
+	Map      Map   `json:"map"`
 }
 	
