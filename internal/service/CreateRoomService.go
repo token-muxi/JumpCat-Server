@@ -50,21 +50,35 @@ func (cs *CreateRoomService) CreateRoom(Player1 string) (int, error) {
 }
 
 // InitMap 生成地图
-// TODO: 添加生成限制逻辑
 func InitMap() Map {
-	length := rand.Intn(600) + 200 //地图长度200-600
-	cat_length := 3
+	length := 200 // 地图长度
+	catLength := 3
 	current := 0
-	count := rand.Intn(length/10) + 5 //地刺个数限制
-	Locas := make([]Location, count)
-	// 生成任意的地刺
-	for i := 0; i < len(Locas); i++ {
-		//地刺长度
-		spike_length := rand.Intn(4) + 1
-		Locas[i].Start = int64(rand.Intn(10) + current + cat_length)
-		Locas[i].End = Locas[i].Start + int64(spike_length)
-		current = int(Locas[i].End)
+	var Locas []Location
+
+	// 直到剩余长度不足5
+	for length-current >= 5 {
+		// 地刺长度
+		spikeLength := rand.Intn(4) + 1
+
+		// 计算起始位置
+		start := rand.Intn(3) + current + catLength
+		end := start + spikeLength
+
+		// 如果超出地图边界，停止生成
+		if end >= length {
+			break
+		}
+
+		// 添加新地刺
+		Locas = append(Locas, Location{
+			Start: int64(start),
+			End:   int64(end),
+		})
+
+		current = end // 更新当前位置
 	}
+
 	return Map{
 		Length: int64(length),
 		Locas:  Locas,
